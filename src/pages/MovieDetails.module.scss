@@ -1,4 +1,7 @@
 .container {
+  --accent: #16a33a;
+  --title-font: inherit;
+
   padding: 24px;
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -15,6 +18,8 @@
 .title {
   margin: 0 0 6px 0;
   line-height: 1.2;
+  color: var(--accent);
+  font-family: var(--title-font);
 }
 
 .meta {
@@ -25,18 +30,25 @@
 .wishBtn {
   padding: 10px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid var(--accent);
   background: transparent;
+  color: var(--accent);
   cursor: pointer;
   margin: 8px 0 16px;
   font-size: 14px;
+  transition: background .16s ease, color .16s ease, opacity .16s ease;
 }
-.wishBtn:hover {
-  background: rgba(255,255,255,0.06);
+.wishBtn:hover:not(:disabled),
+.wishBtn:focus-visible:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  outline: none;
 }
+.wishBtn:disabled { opacity: .8; cursor: default; }
+
 .added {
-  background: rgba(80,200,120,0.15);
-  cursor: default;
+  background: var(--accent);
+  color: #fff;
 }
 
 .overview {
@@ -52,9 +64,16 @@
   padding: 24px;
 }
 
-.error {
-  padding: 24px;
-}
+.error { padding: 24px; }
+
+.g-action   { --accent: #ff4757; --title-font: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; }
+.g-comedy   { --accent: #f1c40f; --title-font: "Trebuchet MS", Verdana, sans-serif; }
+.g-drama    { --accent: #8e44ad; --title-font: Georgia, "Times New Roman", serif; }
+.g-horror   { --accent: #e74c3c; --title-font: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif; }
+.g-romance  { --accent: #ff6b81; --title-font: Georgia, "Times New Roman", serif; }
+.g-scifi    { --accent: #00bcd4; --title-font: "Lucida Sans", Geneva, Verdana, sans-serif; }
+.g-animation{ --accent: #20c997; --title-font: "Trebuchet MS", Verdana, sans-serif; }
+.g-default  { --accent: #5b8cff; --title-font: inherit; }
 
 @media (max-width: 640px) {
   .container {

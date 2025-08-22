@@ -27,6 +27,18 @@ function writeWishlist(list: WishItem[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(list));
 }
 
+function genreVariant(genres?: Array<{ id: number; name: string }>) {
+  const ids = new Set((genres ?? []).map(g => g.id));
+  if (ids.has(28))   return 'action';     
+  if (ids.has(35))   return 'comedy';     
+  if (ids.has(18))   return 'drama';     
+  if (ids.has(27))   return 'horror';     
+  if (ids.has(10749))return 'romance';    
+  if (ids.has(878))  return 'scifi';      
+  if (ids.has(16))   return 'animation';  
+  return 'default';
+}
+
 export default function MovieDetails() {
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
@@ -77,8 +89,10 @@ export default function MovieDetails() {
   if (error) return <p className={styles.error}>Error: {error}</p>;
   if (!data) return null;
 
+  const variant = genreVariant(data.genres); 
+
   return (
-    <article className={styles.container}>
+    <article className={`${styles.container} ${styles['g-' + variant]}`}>
       <img
         src={posterUrl(data.poster_path, 'w500')}
         alt={data.title}

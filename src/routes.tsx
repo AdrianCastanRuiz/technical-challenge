@@ -2,6 +2,7 @@ import { Link, Routes, Route } from 'react-router-dom';
 import UI from './components/UI';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
+import WishList from './pages/WishList';
 
 
 export function AppRoutes() {
@@ -10,6 +11,7 @@ export function AppRoutes() {
       <Route element={<UI />}>
         <Route index element={<Home />} />
         <Route path="movie/:id" element={<MovieDetails />} />
+        <Route path="wishlist" element={<WishList />} /> 
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
