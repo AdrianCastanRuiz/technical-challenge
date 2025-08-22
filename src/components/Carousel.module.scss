@@ -6,43 +6,70 @@
 }
 .title { font-size: 20px; font-weight: 700; }
 
-.actions { display: flex; align-items: center; gap: 8px; }
+.actions { display: flex; gap: 8px; align-items: center; }
 .navBtn {
   width: 36px; height: 36px; border-radius: 9999px;
-  border: 1px solid rgba(255,255,255,0.2); background: transparent;
-  cursor: pointer; font-size: 20px; line-height: 1;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent; cursor: pointer; font-size: 20px; line-height: 1;
 }
 .navBtn:disabled { opacity: .4; cursor: not-allowed; }
 .progress { font-size: 12px; opacity: .8; }
 
 .state { padding: 8px 0; opacity: .9; }
 
-/* Sin scroll horizontal: mostramos 1 póster + título y un botón */
-.viewer {
+.viewport { width: 100%; overflow: hidden; }
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.card {
+  width: 180px; 
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 16px;
-  align-items: start;
+  grid-template-rows: auto auto;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.posterLink {
+  display: block;
+  width: 180px;
+  border-radius: 10px;
+  overflow: hidden; 
+  outline: none;
 }
 
 .poster {
-  width: 220px; aspect-ratio: 2/3; object-fit: cover;
-  border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.15);
+  width: 180px;
+  aspect-ratio: 2/3;
+  object-fit: cover;
   display: block;
+  border-radius: 10px; 
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  will-change: transform;
+}
+
+.posterLink:hover .poster,
+.posterLink:focus-visible .poster {
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 8px 26px rgba(0,0,0,.25);
+  filter: saturate(1.05);
+  cursor: pointer;
 }
 
 .fallback {
-  width: 220px; aspect-ratio: 2/3; border-radius: 10px;
-  display: grid; place-items: center; font-size: 48px;
+  width: 180px;
+  aspect-ratio: 2/3;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  font-size: 42px;
   background: rgba(127,127,127,.15);
 }
 
-.caption { display: grid; align-content: start; gap: 8px; }
-.movieTitle { font-size: 18px; margin: 0; }
-
-.detailsBtn {
-  display: inline-block; padding: 8px 12px; border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2); text-decoration: none;
+.caption {
   font-size: 14px;
+  margin: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.detailsBtn:hover { background: rgba(255,255,255,0.06); }

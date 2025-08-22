@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Carousel.module.scss';
-import Loading from './Loading'; 
-import { discoverByGenre, posterUrl } from '../../api/tmdb'; 
+import Loading from './Loading';
+import { discoverByGenre, posterUrl } from '../../api/tmdb';
 import type { TmdbMovie } from '../types/TmdbMovie';
 
 type Props = {
@@ -12,62 +12,86 @@ type Props = {
   page?: number;
 };
 
+const CARD_W = 180;
+const GAP = 12;
+
 const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: Props) => {
   const [items, setItems] = useState<TmdbMovie[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [index, setIndex] = useState(0);
-  const viewerRef = useRef<HTMLDivElement | null>(null);
+  const [error, setError]   = useState<string | null>(null);
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize]   = useState(1);
+  const [pageCount, setPageCount] = useState(1);
+
+  const viewportRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    setIndex(0);
+    setPageIndex(0);
     discoverByGenre(genreId, page, language)
       .then((d) => setItems(d.results ?? []))
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
   }, [genreId, language, page]);
 
-  const canPrev = index > 0;
-  const canNext = index < Math.max(0, items.length - 1);
-  const prev = () => canPrev && setIndex((i) => i - 1);
-  const next = () => canNext && setIndex((i) => i + 1);
-  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'ArrowLeft') prev();
-    if (e.key === 'ArrowRight') next();
+  const recalcPageSize = () => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const w = el.clientWidth;
+    const perPage = Math.max(1, Math.floor((w + GAP) / (CARD_W + GAP)));
+    setPageSize(perPage);
+    const pc = Math.max(1, Math.ceil(items.length / perPage));
+    setPageCount(pc);
+    setPageIndex((pi) => Math.min(pi, pc - 1));
   };
 
-  if (loading) return (
-    <section className={styles.block} aria-label={title}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-      </header>
-      <div className={styles.state}>
-        <Loading size={32} label={`Loading ${title}…`} />
-      </div>
-    </section>
-  );
+  useEffect(() => { recalcPageSize(); }, [items.length]);
+  useEffect(() => {
+    const onResize = () => recalcPageSize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
-  if (error) return (
-    <section className={styles.block} aria-label={title}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-      </header>
-      <div className={styles.state}>Error: {error}</div>
-    </section>
-  );
+  const canPrev = pageIndex > 0;
+  const canNext = pageIndex < pageCount - 1;
+  const prev = () => canPrev && setPageIndex((i) => i - 1);
+  const next = () => canNext && setPageIndex((i) => i + 1);
 
-  if (!items.length) return (
-    <section className={styles.block} aria-label={title}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-      </header>
-      <div className={styles.state}>No results</div>
-    </section>
-  );
+  if (loading) {
+    return (
+      <section className={styles.block} aria-label={title}>
+        <header className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          <div className={styles.actions}><Loading size={20} label={`Loading ${title}…`} /></div>
+        </header>
+      </section>
+    );
+  }
+  if (error) {
+    return (
+      <section className={styles.block} aria-label={title}>
+        <header className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+        </header>
+        <div className={styles.state}>Error: {error}</div>
+      </section>
+    );
+  }
+  if (!items.length) {
+    return (
+      <section className={styles.block} aria-label={title}>
+        <header className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+        </header>
+        <div className={styles.state}>No results</div>
+      </section>
+    );
+  }
 
-  const m = items[index];
+  const start = pageIndex * pageSize;
+  const visible = items.slice(start, start + pageSize);
 
   return (
     <section className={styles.block} aria-label={title}>
@@ -80,11 +104,9 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: Props) => {
             aria-label="Previous"
             onClick={prev}
             disabled={!canPrev}
-          >
-            ‹
-          </button>
+          >‹</button>
           <span className={styles.progress} aria-live="polite">
-            {index + 1} / {items.length}
+            {pageIndex + 1} / {pageCount}
           </span>
           <button
             type="button"
@@ -92,38 +114,36 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: Props) => {
             aria-label="Next"
             onClick={next}
             disabled={!canNext}
-          >
-            ›
-          </button>
+          >›</button>
         </div>
       </header>
 
-      <div
-        className={styles.viewer}
-        ref={viewerRef}
-        tabIndex={0}
-        onKeyDown={onKey}
-      >
-        {m.poster_path ? (
-          <img
-            className={styles.poster}
-            src={posterUrl(m.poster_path, 'w500')}
-            alt={m.title ?? m.name ?? 'Poster'}
-            loading="lazy"
-          />
-        ) : (
-          <div className={styles.fallback} aria-label="No image">🎬</div>
-        )}
+      <div className={styles.viewport} ref={viewportRef}>
+        <div className={styles.row}>
+          {visible.map((m) => (
+            <article key={m.id} className={styles.card}>
+              <Link
+                to={`/movie/${m.id}`}
+                className={styles.posterLink}
+                aria-label={`Open details for ${m.title ?? m.name}`}
+              >
+                {m.poster_path ? (
+                  <img
+                    className={styles.poster}
+                    src={posterUrl(m.poster_path, 'w342')}
+                    alt={m.title ?? m.name ?? 'Poster'}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className={styles.fallback} aria-label="No image">🎬</div>
+                )}
+              </Link>
 
-        <div className={styles.caption}>
-          <h3 className={styles.movieTitle}>{m.title ?? m.name}</h3>
-          <Link
-            className={styles.detailsBtn}
-            to={`/movie/${m.id}`}
-            aria-label={`Open details for ${m.title ?? m.name}`}
-          >
-            See details
-          </Link>
+              <h3 className={styles.caption} title={m.title ?? m.name}>
+                {m.title ?? m.name}
+              </h3>
+            </article>
+          ))}
         </div>
       </div>
     </section>
