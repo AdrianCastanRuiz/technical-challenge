@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getMovie, posterUrl } from '../../api/tmdb';
+import Loading from '../components/Loading'; 
 
 export default function MovieDetails() {
   const { id } = useParams();
@@ -9,15 +10,23 @@ export default function MovieDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     getMovie(Number(id))
       .then(setData)
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p>Loading…</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <div style={{ minHeight: 320, display: 'grid', placeItems: 'center', padding: 24 }}>
+        <Loading size={40} label="Loading movie…" />
+      </div>
+    );
+  }
+
+  if (error) return <p style={{ padding: 24 }}>Error: {error}</p>;
   if (!data) return null;
 
   return (
@@ -29,7 +38,7 @@ export default function MovieDetails() {
       />
       <div>
         <h1 style={{ marginTop: 0 }}>{data.title}</h1>
-        <p>{data.release_date?.slice(0,4)} · ⭐ {data.vote_average?.toFixed?.(1) ?? '—'}</p>
+        <p>{data.release_date?.slice(0, 4)} · ⭐ {data.vote_average?.toFixed?.(1) ?? '—'}</p>
         <p>{data.overview}</p>
       </div>
     </article>
