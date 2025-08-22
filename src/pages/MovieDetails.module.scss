@@ -1,0 +1,67 @@
+.container {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+}
+
+.poster {
+  width: 240px;
+  border-radius: 10px;
+  display: block;
+  box-shadow: 0 4px 18px rgba(0,0,0,.15);
+}
+
+.title {
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
+.meta {
+  margin: 0 0 12px 0;
+  opacity: 0.85;
+}
+
+.wishBtn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  cursor: pointer;
+  margin: 8px 0 16px;
+  font-size: 14px;
+}
+.wishBtn:hover {
+  background: rgba(255,255,255,0.06);
+}
+.added {
+  background: rgba(80,200,120,0.15);
+  cursor: default;
+}
+
+.overview {
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+.loading {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.error {
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+  .poster {
+    width: 200px;
+    margin: 0 auto;
+  }
+}
