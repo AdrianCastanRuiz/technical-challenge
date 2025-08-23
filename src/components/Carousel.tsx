@@ -5,23 +5,20 @@ import Loading from './Loading';
 import { discoverByGenre, posterUrl } from '../../api/tmdb';
 import type { TmdbMovie } from '../types/TmdbMovie';
 
-type Props = {
+type CarouselProps = {
   title: string;
   genreId: number;
   language?: string;
   page?: number;
 };
 
-const CARD_W = 180;
-const GAP = 12;
-
-const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: Props) => {
+const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProps) => {
   const [items, setItems] = useState<TmdbMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]   = useState<string | null>(null);
 
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize]   = useState(1);
+  const [pageSize, setPageSize]   = useState(7); 
   const [pageCount, setPageCount] = useState(1);
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -36,20 +33,18 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: Props) => {
       .finally(() => setLoading(false));
   }, [genreId, language, page]);
 
-  const recalcPageSize = () => {
-    const el = viewportRef.current;
-    if (!el) return;
-    const w = el.clientWidth;
-    const perPage = Math.max(1, Math.floor((w + GAP) / (CARD_W + GAP)));
+  const recalcPagination = () => {
+    const perPage = 7;
     setPageSize(perPage);
     const pc = Math.max(1, Math.ceil(items.length / perPage));
     setPageCount(pc);
     setPageIndex((pi) => Math.min(pi, pc - 1));
   };
 
-  useEffect(() => { recalcPageSize(); }, [items.length]);
+  useEffect(() => { recalcPagination(); }, [items.length]);
+
   useEffect(() => {
-    const onResize = () => recalcPageSize();
+    const onResize = () => recalcPagination();
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);

@@ -1,48 +1,84 @@
-.block { margin-bottom: 28px; }
+.block { 
+  margin-bottom: 28px; 
+}
 
 .header {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; margin-bottom: 12px;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  gap: 12px; 
+  margin-bottom: 12px;
+ 
+  
 }
-.title { font-size: 20px; font-weight: 700; }
 
-.actions { display: flex; gap: 8px; align-items: center; }
+
+
+.title { 
+  font-size: 1rem; 
+  font-weight: 700; 
+}
+
+.actions { 
+  display: flex; 
+  gap: 8px; 
+  align-items: center; 
+}
+
 .navBtn {
-  width: 36px; height: 36px; border-radius: 9999px;
+  width: 36px;
+  height: 36px; 
+  border-radius: 9999px;
   border: 1px solid rgba(255,255,255,0.2);
-  background: transparent; cursor: pointer; font-size: 20px; line-height: 1;
+  background: transparent; cursor: pointer; 
+  font-size: 20px; 
+  line-height: 1;
 }
-.navBtn:disabled { opacity: .4; cursor: not-allowed; }
-.progress { font-size: 12px; opacity: .8; }
 
-.state { padding: 8px 0; opacity: .9; }
+.navBtn:disabled { 
+  opacity: .4; 
+  cursor: not-allowed; 
+}
 
-.viewport { width: 100%; overflow: hidden; }
+.progress { 
+  font-size: 12px; 
+  opacity: .8; 
+}
+
+.state { 
+  padding: 8px 0; 
+  opacity: .9; 
+}
+
+.viewport { 
+  width: 100%; 
+  overflow: hidden; 
+}
 
 .row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: 12px;
+  row-gap: 0;
 }
 
 .card {
-  width: 180px; 
   display: grid;
   grid-template-rows: auto auto;
   gap: 8px;
-  flex: 0 0 auto;
 }
 
+/* ocupar 100% de la columna */
 .posterLink {
   display: block;
-  width: 180px;
+  width: 100%;
   border-radius: 10px;
   overflow: hidden; 
   outline: none;
 }
 
 .poster {
-  width: 180px;
+  width: 100%;
   aspect-ratio: 2/3;
   object-fit: cover;
   display: block;
@@ -60,7 +96,7 @@
 }
 
 .fallback {
-  width: 180px;
+  width: 100%;
   aspect-ratio: 2/3;
   border-radius: 10px;
   display: grid; place-items: center;
@@ -72,4 +108,14 @@
   font-size: 14px;
   margin: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+
+@media (max-width: 600px){
+  .title{
+    font-size: 0.8rem;
+  }
+   .header{
+     padding: 0 1rem;
+   }
 }

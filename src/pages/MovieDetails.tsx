@@ -3,15 +3,13 @@ import { useParams } from 'react-router-dom';
 import styles from './MovieDetails.module.scss';
 import { getMovie, posterUrl } from '../../api/tmdb';
 import Loading from '../components/Loading';
+import type { WishItem } from '../types/WishItem';
+import type { TmdbMovie } from '../types/TmdbMovie';
+
 
 const LS_KEY = 'wishlist';
 
-type WishItem = {
-  id: number;
-  title: string;
-  poster_path: string | null;
-  year?: string;
-};
+
 
 function readWishlist(): WishItem[] {
   if (typeof window === 'undefined') return [];
@@ -41,7 +39,7 @@ function genreVariant(genres?: Array<{ id: number; name: string }>) {
 
 export default function MovieDetails() {
   const { id } = useParams();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<TmdbMovie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inWishlist, setInWishlist] = useState(false);
@@ -90,7 +88,7 @@ export default function MovieDetails() {
   if (!data) return null;
 
   const variant = genreVariant(data.genres); 
-
+  console.log("data: ", data)
   return (
     <article className={`${styles.container} ${styles['g-' + variant]}`}>
       <img

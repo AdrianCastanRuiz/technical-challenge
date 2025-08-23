@@ -1,9 +1,8 @@
-// src/api/tmdb.ts
 import type { TmdbMovie } from "../src/types/TmdbMovie";
 export async function discoverByGenre(
   genreId: number,
   page = 1,
-  language = 'en-US' // usa en-US por defecto
+  language = 'en-US' 
 ) {
   const r = await fetch(
     `/api/tmdb/discover?genreId=${genreId}&language=${language}&page=${page}`
