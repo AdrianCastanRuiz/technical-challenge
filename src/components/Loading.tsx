@@ -1,3 +1,4 @@
+// Loading.tsx
 import styles from './Loading.module.scss';
 
 type Props = {
@@ -14,9 +15,15 @@ export default function Loading({ size = 32, label = 'Loading…', overlay = fal
   };
 
   const content = (
-    <div className={styles.wrapper} role="status" aria-live="polite" aria-busy="true">
+    <div
+      className={styles.wrapper}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label={label}             // ✅ nombre accesible explícito
+    >
       <span className={styles.spinner} style={spinnerStyle} />
-      <span className={styles.srOnly}>{label}</span>
+      <span className={styles.srOnly} aria-hidden="true">{label}</span> {/* ✅ no se lee dos veces */}
     </div>
   );
 
