@@ -1,5 +1,7 @@
 :root { 
-  --brand: #5b8cff;
+  // --brand: #5b8cff;
+   --brand: #44506b;
+
   --dark: #1e1e2f;
   --light: #ffffff;
   --gray: #f5f7fa;
@@ -18,26 +20,6 @@ body {
   min-height: 100vh;
 }
 
-header {
-  background: var(--brand);
-  color: var(--light);
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-
-h1{
-  font-style: italic;
-}
 
 
-footer {
-  background: var(--dark);
-  color: var(--light);
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
-}
+

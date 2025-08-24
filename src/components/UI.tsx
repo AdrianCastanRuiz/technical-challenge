@@ -15,14 +15,20 @@ const UI = () => {
         </h1>
       </header>
 
-      <div className={styles.toolbar}>
-        {!isOnWishlist && (
-          <Link to="/wishlist" className={styles.wishlistBtn} aria-label="Open wish list">
-            Wish list
-          </Link>
-        )}
-      </div>
-      <Outlet />
+      {/* El main ocupa todo el espacio disponible para empujar el footer abajo */}
+      <main className={styles.main} role="main">
+        <div className={styles.toolbar}>
+          {!isOnWishlist && (
+            <Link to="/wishlist" className={styles.wishlistBtn} aria-label="Open wish list">
+              Wish list
+            </Link>
+          )}
+        </div>
+
+        {/* Aquí renderizan tus páginas */}
+        <Outlet />
+      </main>
+
       <footer>Movie App 2025.</footer>
     </div>
   );
