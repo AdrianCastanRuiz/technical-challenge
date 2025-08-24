@@ -6,7 +6,7 @@ const UI = () => {
   const isOnWishlist = pathname === "/wishlist" || pathname.startsWith("/wishlist/");
 
   return (
-    <div>
+    <div className={styles.container}>
       <header>
         <h1 className={styles.logo}>
           <Link to="/" className={styles.homeLink} aria-label="Go to home">
@@ -22,7 +22,6 @@ const UI = () => {
           </Link>
         )}
       </div>
-
       <Outlet />
       <footer>Movie App 2025.</footer>
     </div>
