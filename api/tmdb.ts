@@ -8,7 +8,10 @@ export async function discoverByGenre(
     `/api/tmdb/discover?genreId=${genreId}&language=${language}&page=${page}`
   );
   if (!r.ok) throw new Error(`TMDb ${r.status}`);
-  return r.json() as Promise<{ results: TmdbMovie[] }>;
+  return r.json() as Promise<{
+    page: number;
+    total_pages: number; results: TmdbMovie[] 
+}>;
 }
 
 export function posterUrl(

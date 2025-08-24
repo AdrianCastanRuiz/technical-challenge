@@ -7,4 +7,5 @@ export type TmdbMovie = {
   release_date?: string;
   vote_average: number;
   genres: {id: number, name: string}[]
+  total_pages: number
 };

@@ -9,41 +9,66 @@ type CarouselProps = {
   title: string;
   genreId: number;
   language?: string;
-  page?: number;
+  page?: number; // página inicial de TMDB (por defecto 1)
 };
+
+const PER_PAGE_UI = 5;
 
 const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProps) => {
   const [items, setItems] = useState<TmdbMovie[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);            // carga inicial
   const [error, setError] = useState<string | null>(null);
 
+  // paginación UI (5 por slide)
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(7);
+  const [pageSize, setPageSize] = useState(PER_PAGE_UI);
   const [pageCount, setPageCount] = useState(1);
+
+  // paginación API (TMDB)
+  const [tmdbPage, setTmdbPage] = useState<number>(page);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [pendingAdvance, setPendingAdvance] = useState(false); // avanzar tras fetch
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
+  // carga inicial o cuando cambian filtros
   useEffect(() => {
-    setLoading(true)
-    setError(null)
-    setPageIndex(0)
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    setItems([]);
+    setPageIndex(0);
+    setTmdbPage(page);
+    setTotalPages(1);
+
     discoverByGenre(genreId, page, language)
       .then((d) => {
-        setItems(d.results ?? [])
-        console.log(d.results)
+        if (cancelled) return;
+        setItems(d.results ?? []);
+        setTmdbPage(d.page ?? page);
+        setTotalPages(d.total_pages ?? 1);
       })
-      .catch((e) => setError(String(e)))
-      .finally(() => setLoading(false))
-  }, [genreId, language, page])
+      .catch((e) => {
+        if (cancelled) return;
+        setError(String(e));
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
+      });
 
+    return () => { cancelled = true; };
+  }, [genreId, language, page]);
+
+  // recálculo de páginas UI
   const recalcPagination = () => {
-    const perPage = 7;
+    const perPage = PER_PAGE_UI;
     setPageSize(perPage);
     const pc = Math.max(1, Math.ceil(items.length / perPage));
     setPageCount(pc);
     setPageIndex((pi) => Math.min(pi, pc - 1));
   };
-
   useEffect(() => { recalcPagination(); }, [items.length]);
 
   useEffect(() => {
@@ -52,21 +77,66 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // si había un avance pendiente tras fetch, avanza cuando ya exista la nueva "página" local
+  useEffect(() => {
+    if (!pendingAdvance) return;
+    const pc = Math.max(1, Math.ceil(items.length / pageSize));
+    if (pageIndex < pc - 1) {
+      setPageIndex((i) => i + 1);
+      setPendingAdvance(false);
+    }
+  }, [items.length, pageSize, pageIndex, pendingAdvance]);
+
+  const fetchNextApiPage = async () => {
+    if (isFetchingMore) return;
+    if (tmdbPage >= totalPages) return;
+
+    setIsFetchingMore(true);
+    try {
+      const nextPage = tmdbPage + 1;
+      const d = await discoverByGenre(genreId, nextPage, language);
+      setItems((prev) => [...prev, ...(d.results ?? [])]);
+      setTmdbPage(d.page ?? nextPage);
+      setTotalPages(d.total_pages ?? totalPages);
+    } catch (e: any) {
+      setError(String(e));
+    } finally {
+      setIsFetchingMore(false);
+    }
+  };
+
   const canPrev = pageIndex > 0;
-  const canNext = pageIndex < pageCount - 1;
-  const prev = () => canPrev && setPageIndex((i) => i - 1);
-  const next = () => canNext && setPageIndex((i) => i + 1);
+  const hasMoreRemote = tmdbPage < totalPages;
+  const canNextLocal = pageIndex < pageCount - 1;
+  const canNext = canNextLocal || hasMoreRemote; // hay siguiente si hay slide local o más en API
+
+  const prev = () => { if (canPrev) setPageIndex((i) => i - 1); };
+
+  const next = async () => {
+    if (canNextLocal) {
+      setPageIndex((i) => i + 1);
+      return;
+    }
+    // No hay más slides locales, intenta cargar más desde la API
+    if (hasMoreRemote) {
+      setPendingAdvance(true); // queremos avanzar tras el fetch
+      await fetchNextApiPage();
+    }
+  };
 
   if (loading) {
     return (
       <section className={styles.block} aria-label={title}>
         <header className={styles.header}>
           <h2 className={styles.title}>{title}</h2>
-          <div className={styles.actions}><Loading size={20} label={`Loading ${title}…`} /></div>
+          <div className={styles.actions}>
+            <Loading size={20} label={`Loading ${title}…`} />
+          </div>
         </header>
       </section>
     );
   }
+
   if (error) {
     return (
       <section className={styles.block} aria-label={title}>
@@ -77,6 +147,7 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
       </section>
     );
   }
+
   if (!items.length) {
     return (
       <section className={styles.block} aria-label={title}>
@@ -103,16 +174,24 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
             onClick={prev}
             disabled={!canPrev}
           >‹</button>
+
           <span className={styles.progress} aria-live="polite">
             {pageIndex + 1} / {pageCount}
           </span>
+
           <button
             type="button"
             className={styles.navBtn}
             aria-label="Next"
             onClick={next}
-            disabled={!canNext}
+            disabled={!canNext || isFetchingMore}
           >›</button>
+
+          {isFetchingMore && (
+            <span className={styles.inlineLoader}>
+              <Loading size={16} label="Loading more…" />
+            </span>
+          )}
         </div>
       </header>
 

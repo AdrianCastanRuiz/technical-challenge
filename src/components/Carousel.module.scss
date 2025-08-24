@@ -1,67 +1,136 @@
-.block { 
-  margin-bottom: 28px; 
+/* Carousel.module.scss */
+
+/* =========
+   Variables
+   ========= */
+$gap: 16px;
+$radius: 10px;
+$nav-size: 36px;
+
+$bp-xl: 1280px;  /* desktop amplio */
+$bp-lg: 1024px;  /* laptop/tablet landscape */
+$bp-md: 768px;   /* tablet */
+$bp-sm: 600px;   /* móvil */
+
+/* =========
+   Bloque
+   ========= */
+.block {
+  margin-bottom: 28px;
 }
 
+/* =========
+   Header
+   ========= */
 .header {
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px; 
+  gap: 12px;
   margin-bottom: 12px;
- 
-  
 }
 
-
-
-.title { 
-  font-size: 1rem; 
-  font-weight: 700; 
+.title {
+  font-size: 1rem;
+  font-weight: 700;
 }
 
-.actions { 
-  display: flex; 
-  gap: 8px; 
-  align-items: center; 
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
+/* =========
+   Botones
+   ========= */
 .navBtn {
-  width: 36px;
-  height: 36px; 
+  width: $nav-size;
+  height: $nav-size;
   border-radius: 9999px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: transparent; cursor: pointer; 
-  font-size: 20px; 
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
   line-height: 1;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.06);
+    outline: none;
+  }
 }
 
-.navBtn:disabled { 
-  opacity: .4; 
-  cursor: not-allowed; 
+.navBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.progress { 
-  font-size: 12px; 
-  opacity: .8; 
+.progress {
+  font-size: 12px;
+  opacity: 0.8;
 }
 
-.state { 
-  padding: 8px 0; 
-  opacity: .9; 
+.inlineLoader {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
 }
 
-.viewport { 
-  width: 100%; 
-  overflow: hidden; 
+/* =========
+   States
+   ========= */
+.state {
+  padding: 8px 0;
+  opacity: 0.9;
+}
+
+/* =========
+   Viewport & fila
+   ========= */
+.viewport {
+  width: 100%;
+  overflow: hidden;
 }
 
 .row {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  column-gap: 12px;
+  grid-template-columns: repeat(5, 1fr); /* 5 películas ocupan todo el ancho */
+  column-gap: $gap;
   row-gap: 0;
+
+  /* desktop amplio: opcional 5->5 (sin cambios) */
+  @media (max-width: $bp-xl) {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* laptops / tablets landscape: 4 columnas */
+  @media (max-width: $bp-lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* tablets: 3 columnas */
+  @media (max-width: $bp-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* móviles: 2 columnas */
+  @media (max-width: $bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 12px;
+  }
 }
 
+/* =========
+   Tarjeta
+   ========= */
 .card {
   display: grid;
   grid-template-rows: auto auto;
@@ -72,17 +141,22 @@
 .posterLink {
   display: block;
   width: 100%;
-  border-radius: 10px;
-  overflow: hidden; 
+  border-radius: $radius;
+  overflow: hidden;
   outline: none;
+
+  /* foco visible accesible */
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+  }
 }
 
 .poster {
   width: 100%;
-  aspect-ratio: 2/3;
+  aspect-ratio: 2 / 3;
   object-fit: cover;
   display: block;
-  border-radius: 10px; 
+  border-radius: $radius;
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
   will-change: transform;
 }
@@ -90,32 +164,50 @@
 .posterLink:hover .poster,
 .posterLink:focus-visible .poster {
   transform: scale(1.06) translateY(-2px);
-  box-shadow: 0 8px 26px rgba(0,0,0,.25);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
   filter: saturate(1.05);
   cursor: pointer;
 }
 
 .fallback {
   width: 100%;
-  aspect-ratio: 2/3;
-  border-radius: 10px;
-  display: grid; place-items: center;
+  aspect-ratio: 2 / 3;
+  border-radius: $radius;
+  display: grid;
+  place-items: center;
   font-size: 42px;
-  background: rgba(127,127,127,.15);
+  background: rgba(127, 127, 127, 0.15);
 }
 
 .caption {
   font-size: 14px;
   margin: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-
-@media (max-width: 600px){
-  .title{
-    font-size: 0.8rem;
+/* =========
+   Accesibilidad / rendimiento
+   ========= */
+@media (prefers-reduced-motion: reduce) {
+  .navBtn,
+  .poster {
+    transition: none;
   }
-   .header{
-     padding: 0 1rem;
-   }
+}
+
+/* =========
+   Responsive finos
+   ========= */
+@media (max-width: $bp-sm) {
+  .title {
+    font-size: 0.9rem;
+  }
+  .header {
+    padding: 0 1rem;
+  }
+  .caption {
+    font-size: 13px;
+  }
 }
