@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './Carousel.module.scss';
-import Loading from './Loading';
-import { discoverByGenre, posterUrl } from '../../api/tmdb';
-import type { TmdbMovie } from '../types/TmdbMovie';
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import styles from "./Carousel.module.scss";
+import Loading from "./Loading";
+import { discoverByGenre, posterUrl } from "../../api/tmdb";
+import type { TmdbMovie } from "../types/TmdbMovie";
 
 type CarouselProps = {
   title: string;
@@ -12,27 +12,22 @@ type CarouselProps = {
   page?: number; // página inicial de TMDB (por defecto 1)
 };
 
-const PER_PAGE_UI = 5;
+const PAGE_SIZE = 5;
 
-const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProps) => {
+const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProps) => {
   const [items, setItems] = useState<TmdbMovie[]>([]);
-  const [loading, setLoading] = useState(true);            // carga inicial
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // paginación UI (5 por slide)
+  // UI
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(PER_PAGE_UI);
-  const [pageCount, setPageCount] = useState(1);
 
-  // paginación API (TMDB)
+  // API
   const [tmdbPage, setTmdbPage] = useState<number>(page);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const [pendingAdvance, setPendingAdvance] = useState(false); // avanzar tras fetch
 
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-
-  // carga inicial o cuando cambian filtros
+  // Carga inicial / cuando cambian filtros
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -42,62 +37,67 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
     setTmdbPage(page);
     setTotalPages(1);
 
-    discoverByGenre(genreId, page, language)
-      .then((d) => {
+    (async () => {
+      try {
+        const d = await discoverByGenre(genreId, page, language);
         if (cancelled) return;
         setItems(d.results ?? []);
         setTmdbPage(d.page ?? page);
         setTotalPages(d.total_pages ?? 1);
-      })
-      .catch((e) => {
+      } catch (e: any) {
         if (cancelled) return;
         setError(String(e));
-      })
-      .finally(() => {
+      } finally {
         if (cancelled) return;
         setLoading(false);
-      });
+      }
+    })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [genreId, language, page]);
 
-  // recálculo de páginas UI
-  const recalcPagination = () => {
-    const perPage = PER_PAGE_UI;
-    setPageSize(perPage);
-    const pc = Math.max(1, Math.ceil(items.length / perPage));
-    setPageCount(pc);
-    setPageIndex((pi) => Math.min(pi, pc - 1));
+  // Derivados simples
+  const pageCount = useMemo(
+    () => Math.max(1, Math.ceil(items.length / PAGE_SIZE)),
+    [items.length]
+  );
+  const canPrev = pageIndex > 0;
+  const canNextLocal = pageIndex < pageCount - 1;
+  const hasMoreRemote = tmdbPage < totalPages;
+  const canNext = canNextLocal || hasMoreRemote;
+
+  const start = pageIndex * PAGE_SIZE;
+  const visible = items.slice(start, start + PAGE_SIZE);
+
+  const prev = () => {
+    if (canPrev) setPageIndex((i) => i - 1);
   };
-  useEffect(() => { recalcPagination(); }, [items.length]);
 
-  useEffect(() => {
-    const onResize = () => recalcPagination();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  // si había un avance pendiente tras fetch, avanza cuando ya exista la nueva "página" local
-  useEffect(() => {
-    if (!pendingAdvance) return;
-    const pc = Math.max(1, Math.ceil(items.length / pageSize));
-    if (pageIndex < pc - 1) {
+  const next = async () => {
+    if (canNextLocal) {
       setPageIndex((i) => i + 1);
-      setPendingAdvance(false);
+      return;
     }
-  }, [items.length, pageSize, pageIndex, pendingAdvance]);
-
-  const fetchNextApiPage = async () => {
-    if (isFetchingMore) return;
-    if (tmdbPage >= totalPages) return;
+    if (!hasMoreRemote || isFetchingMore) return;
 
     setIsFetchingMore(true);
     try {
-      const nextPage = tmdbPage + 1;
-      const d = await discoverByGenre(genreId, nextPage, language);
-      setItems((prev) => [...prev, ...(d.results ?? [])]);
-      setTmdbPage(d.page ?? nextPage);
-      setTotalPages(d.total_pages ?? totalPages);
+      const beforeCount = pageCount;
+      const nextPageNum = tmdbPage + 1;
+      const d = await discoverByGenre(genreId, nextPageNum, language);
+      const newResults = d.results ?? [];
+      if (newResults.length) {
+        setItems((prev) => [...prev, ...newResults]);
+        setTmdbPage(d.page ?? nextPageNum);
+        setTotalPages(d.total_pages ?? totalPages);
+        // Si al agregar hay una nueva "slide", avanzamos
+        const afterCount = Math.max(1, Math.ceil((items.length + newResults.length) / PAGE_SIZE));
+        if (afterCount > beforeCount) {
+          setPageIndex((i) => i + 1);
+        }
+      }
     } catch (e: any) {
       setError(String(e));
     } finally {
@@ -105,25 +105,7 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
     }
   };
 
-  const canPrev = pageIndex > 0;
-  const hasMoreRemote = tmdbPage < totalPages;
-  const canNextLocal = pageIndex < pageCount - 1;
-  const canNext = canNextLocal || hasMoreRemote; // hay siguiente si hay slide local o más en API
-
-  const prev = () => { if (canPrev) setPageIndex((i) => i - 1); };
-
-  const next = async () => {
-    if (canNextLocal) {
-      setPageIndex((i) => i + 1);
-      return;
-    }
-    // No hay más slides locales, intenta cargar más desde la API
-    if (hasMoreRemote) {
-      setPendingAdvance(true); // queremos avanzar tras el fetch
-      await fetchNextApiPage();
-    }
-  };
-
+  // UI states
   if (loading) {
     return (
       <section className={styles.block} aria-label={title}>
@@ -159,9 +141,6 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
     );
   }
 
-  const start = pageIndex * pageSize;
-  const visible = items.slice(start, start + pageSize);
-
   return (
     <section className={styles.block} aria-label={title}>
       <header className={styles.header}>
@@ -173,7 +152,9 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
             aria-label="Previous"
             onClick={prev}
             disabled={!canPrev}
-          >‹</button>
+          >
+            ‹
+          </button>
 
           <span className={styles.progress} aria-live="polite">
             {pageIndex + 1} / {pageCount}
@@ -185,7 +166,9 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
             aria-label="Next"
             onClick={next}
             disabled={!canNext || isFetchingMore}
-          >›</button>
+          >
+            ›
+          </button>
 
           {isFetchingMore && (
             <span className={styles.inlineLoader}>
@@ -195,7 +178,7 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
         </div>
       </header>
 
-      <div className={styles.viewport} ref={viewportRef}>
+      <div className={styles.viewport}>
         <div className={styles.row}>
           {visible.map((m) => (
             <article key={m.id} className={styles.card}>
@@ -207,12 +190,14 @@ const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProp
                 {m.poster_path ? (
                   <img
                     className={styles.poster}
-                    src={posterUrl(m.poster_path, 'w342')}
-                    alt={m.title ?? m.name ?? 'Poster'}
+                    src={posterUrl(m.poster_path, "w342")}
+                    alt={m.title ?? m.name ?? "Poster"}
                     loading="lazy"
                   />
                 ) : (
-                  <div className={styles.fallback} aria-label="No image">🎬</div>
+                  <div className={styles.fallback} aria-label="No image">
+                    🎬
+                  </div>
                 )}
               </Link>
 
