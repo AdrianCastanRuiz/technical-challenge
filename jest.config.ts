@@ -1,3 +1,4 @@
+// jest.config.ts
 import type { Config } from 'jest';
 
 const config: Config = {
@@ -9,9 +10,15 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      { tsconfig: '<rootDir>/tsconfig.jest.json', isolatedModules: true }
+    ],
   },
-  testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
+  testMatch: [
+    '**/__tests__/**/*.[jt]s?(x)',
+    '**/?(*.)+(spec|test).[tj]s?(x)',
+  ],
 };
 
 export default config;
