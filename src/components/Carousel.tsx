@@ -15,23 +15,26 @@ type CarouselProps = {
 const Carousel = ({ title, genreId, language = 'en-US', page = 1 }: CarouselProps) => {
   const [items, setItems] = useState<TmdbMovie[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize]   = useState(7); 
+  const [pageSize, setPageSize] = useState(7);
   const [pageCount, setPageCount] = useState(1);
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    setPageIndex(0);
+    setLoading(true)
+    setError(null)
+    setPageIndex(0)
     discoverByGenre(genreId, page, language)
-      .then((d) => setItems(d.results ?? []))
+      .then((d) => {
+        setItems(d.results ?? [])
+        console.log(d.results)
+      })
       .catch((e) => setError(String(e)))
-      .finally(() => setLoading(false));
-  }, [genreId, language, page]);
+      .finally(() => setLoading(false))
+  }, [genreId, language, page])
 
   const recalcPagination = () => {
     const perPage = 7;

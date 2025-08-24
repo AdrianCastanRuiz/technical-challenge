@@ -21,6 +21,5 @@ export function posterUrl(
 export async function getMovie(id: number, language = 'en-US') {
   const r = await fetch(`/api/tmdb/movie/${id}?language=${language}`);
   if (!r.ok) throw new Error(`TMDb ${r.status}`);
-  // ❌ no hagas console.log(r.json()) (eso lee el body una vez y lo “gasta”)
   return r.json();
 }

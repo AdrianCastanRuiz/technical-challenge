@@ -25,11 +25,10 @@ export default function tmdbRoutes({ token, apiKey } = {}) {
     return res.json();
   }
 
-  // Defaults de idioma a EN (cámbialos si quieres ES)
   router.get('/trending', async (req, res) => {
     try {
-      const media = String(req.query.media ?? 'movie'); // movie|tv|all
-      const window = String(req.query.window ?? 'day'); // day|week
+      const media = String(req.query.media ?? 'movie'); 
+      const window = String(req.query.window ?? 'day'); 
       const language = String(req.query.language ?? 'en-US');
       const page = String(req.query.page ?? '1');
       res.json(await tmdbGet(`/trending/${media}/${window}`, { language, page }));
@@ -62,7 +61,7 @@ export default function tmdbRoutes({ token, apiKey } = {}) {
     } catch (err) { res.status(500).json({ error: String(err) }); }
   });
 
-  // 👇 ESTA ruta debe ir DENTRO antes del return
+
   router.get('/movie/:id', async (req, res) => {
     try {
       const id = String(req.params.id);
