@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './MovieDetails.module.scss';
 import { getMovie, posterUrl } from '../../../api/tmdb';
-import Loading from '../../components/Loading';
+import Loading from '../../components/Loading/Index';
 import type { WishItem } from '../../types/WishItem';
 import type { TmdbMovie } from '../../types/TmdbMovie';
 

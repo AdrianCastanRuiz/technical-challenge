@@ -1,105 +1,167 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import Carousel from '../components/Carousel';
-// Mock del módulo de la API
-jest.mock('../../api/tmdb', () => ({
-  posterUrl: (p: string) => `https://img.test/${p}`,
-  discoverByGenre: jest.fn(),
+
+jest.mock('../contexts/CarouselContext', () => ({
+  useCarousel: jest.fn(),
 }));
 
-import { discoverByGenre } from '../../api/tmdb';
+jest.mock('../../api/tmdb', () => ({
+  posterUrl: (p: string) => `https://img.test${p}`,
+}));
 
-const moviesPage = (page: number, total_pages: number, count: number, startId = 1) => ({
-  page,
-  total_pages,
-  results: Array.from({ length: count }, (_, i) => ({
-    id: startId + i,
-    title: `Movie ${startId + i}`,
-    poster_path: `p${startId + i}.jpg`,
-  })),
+import Carousel from '../components/Carousel/Index';
+import { useCarousel } from '../contexts/CarouselContext';
+import type { TmdbMovie } from '../types/TmdbMovie';
+
+type UC = jest.MockedFunction<typeof useCarousel>;
+
+const fakeMovie = (id: number, withPoster = true, overrides: Partial<TmdbMovie> = {}): TmdbMovie => ({
+  id,
+  title: `Movie ${id}`,
+  poster_path: withPoster ? `/p${id}.jpg` : null,
+  overview: 'Lorem ipsum',
+  release_date: '2024-01-01',
+  total_pages: 1,
+  vote_average: 2,
+  genres: [{id: 2, name: "Acttion" }]
 });
 
-describe('Carousel', () => {
+describe('Carousel (presentational)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('muestra loading y luego renderiza películas', async () => {
-    (discoverByGenre as jest.Mock).mockResolvedValueOnce(
-      moviesPage(1, 2, 5) // 5 resultados en la primera página
-    );
+  it('muestra estado de loading', () => {
+    (useCarousel as UC).mockReturnValue({
+      items: [],
+      loading: true,
+      error: null,
+      pageIndex: 0,
+      isFetchingMore: false,
+      canPrev: false,
+      canNext: false,
+      visible: [],
+      prev: jest.fn(),
+      next: jest.fn(),
+    });
 
     render(
       <MemoryRouter>
-        <Carousel title="Top Action" genreId={28} />
+        <Carousel title="Action" />
       </MemoryRouter>
     );
 
-    // Loading visible
-    expect(screen.getByLabelText(/Loading Top Action/i)).toBeInTheDocument();
-
-    // Espera a que aparezca el primer título
-    expect(await screen.findByText('Movie 1')).toBeInTheDocument();
-    // Deben estar 5 visibles (PAGE_SIZE = 5)
-    for (let i = 1; i <= 5; i++) {
-      expect(screen.getByText(`Movie ${i}`)).toBeInTheDocument();
-    }
+    expect(screen.getByRole('status', { name: /loading action/i })).toBeInTheDocument();
   });
 
-  test('al pulsar Next pide otra página cuando no hay más locales', async () => {
-    // 1ª carga: 5 pelis (una "slide" completa)
-    (discoverByGenre as jest.Mock)
-      .mockResolvedValueOnce(moviesPage(1, 2, 5))
-      // 2ª página desde API: otras 5
-      .mockResolvedValueOnce(moviesPage(2, 2, 5, 6));
+  it('muestra estado de error', () => {
+    (useCarousel as UC).mockReturnValue({
+      items: [],
+      loading: false,
+      error: 'Boom',
+      pageIndex: 0,
+      isFetchingMore: false,
+      canPrev: false,
+      canNext: false,
+      visible: [],
+      prev: jest.fn(),
+      next: jest.fn(),
+    });
 
     render(
       <MemoryRouter>
-        <Carousel title="Top Action" genreId={28} />
+        <Carousel title="Action" />
       </MemoryRouter>
     );
 
-    // Espera render inicial
-    await screen.findByText('Movie 1');
+    expect(screen.getByText(/error: boom/i)).toBeInTheDocument();
+  });
 
-    // Next debería estar habilitado porque hay más remoto
-    const nextBtn = screen.getByRole('button', { name: /Next/i });
+  it('muestra estado vacío', () => {
+    (useCarousel as UC).mockReturnValue({
+      items: [],
+      loading: false,
+      error: null,
+      pageIndex: 0,
+      isFetchingMore: false,
+      canPrev: false,
+      canNext: false,
+      visible: [],
+      prev: jest.fn(),
+      next: jest.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <Carousel title="Action" />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/no results/i)).toBeInTheDocument();
+  });
+
+  it('renderiza tarjetas y llama a next/prev correctamente', async () => {
+    const prev = jest.fn();
+    const next = jest.fn();
+
+    (useCarousel as UC).mockReturnValue({
+      items: [fakeMovie(1), fakeMovie(2, false)],
+      loading: false,
+      error: null,
+      pageIndex: 0,
+      isFetchingMore: false,
+      canPrev: false,
+      canNext: true,
+      visible: [fakeMovie(1), fakeMovie(2, false)],
+      prev,
+      next,
+    });
+
+    render(
+      <MemoryRouter>
+        <Carousel title="Action" />
+      </MemoryRouter>
+    );
+
+    // con poster
+    expect(screen.getByRole('img', { name: 'Movie 1' })).toBeInTheDocument();
+    // fallback accesible
+    expect(screen.getByLabelText(/no image/i)).toBeInTheDocument();
+
+    const prevBtn = screen.getByRole('button', { name: /previous/i });
+    const nextBtn = screen.getByRole('button', { name: /next/i });
+
+    expect(prevBtn).toBeDisabled();
     expect(nextBtn).toBeEnabled();
 
-    // Click en Next -> no hay más locales, así que fetch de página 2 y avanza
     await userEvent.click(nextBtn);
+    expect(next).toHaveBeenCalledTimes(1);
 
-    // Espera a que aparezca contenido de la segunda tanda
-    await waitFor(() => {
-      expect(screen.getByText('Movie 6')).toBeInTheDocument();
+    await userEvent.click(prevBtn); // disabled → no llama
+    expect(prev).not.toHaveBeenCalled();
+  });
+
+  it('muestra loader inline cuando isFetchingMore=true', () => {
+    (useCarousel as UC).mockReturnValue({
+      items: [fakeMovie(1)],
+      loading: false,
+      error: null,
+      pageIndex: 0,
+      isFetchingMore: true,
+      canPrev: false,
+      canNext: false,
+      visible: [fakeMovie(1)],
+      prev: jest.fn(),
+      next: jest.fn(),
     });
-  });
-
-  test('deshabilita Prev al inicio', async () => {
-    (discoverByGenre as jest.Mock).mockResolvedValueOnce(moviesPage(1, 1, 5));
 
     render(
       <MemoryRouter>
-        <Carousel title="Top Action" genreId={28} />
+        <Carousel title="Action" />
       </MemoryRouter>
     );
 
-    await screen.findByText('Movie 1');
-
-    const prevBtn = screen.getByRole('button', { name: /Previous/i });
-    expect(prevBtn).toBeDisabled();
-  });
-
-  test('muestra estado de error si la API falla', async () => {
-    (discoverByGenre as jest.Mock).mockRejectedValueOnce(new Error('Network down'));
-
-    render(
-      <MemoryRouter>
-        <Carousel title="Top Action" genreId={28} />
-      </MemoryRouter>
-    );
-
-    expect(await screen.findByText(/Error:/i)).toHaveTextContent('Network down');
+    expect(screen.getByRole('status', { name: /loading more/i })).toBeInTheDocument();
   });
 });
