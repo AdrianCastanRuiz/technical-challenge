@@ -1,4 +1,5 @@
 import type { TmdbMovie } from "../src/types/TmdbMovie";
+
 export async function discoverByGenre(
   genreId: number,
   page = 1,
@@ -25,4 +26,10 @@ export async function getMovie(id: number, language = 'en-US') {
   const r = await fetch(`/api/tmdb/movie/${id}?language=${language}`);
   if (!r.ok) throw new Error(`TMDb ${r.status}`);
   return r.json();
+}
+
+
+export async function getGenres(){
+  const r = await fetch(`api.themoviedb.org/3/genre/movie/list`)
+  console.log(r)
 }

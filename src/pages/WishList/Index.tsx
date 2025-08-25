@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './WishList.module.scss';
-import { posterUrl } from '../../api/tmdb';
+import { posterUrl } from '../../../api/tmdb';
+import { type WishItem } from '../../types/WishItem';
 
 const LS_KEY = 'wishlist';
 
-type WishItem = {
-  id: number;
-  title: string;
-  poster_path: string | null;
-  year?: string;
-};
 
 function readWishlist(): WishItem[] {
   if (typeof window === 'undefined') return [];
@@ -28,7 +23,7 @@ function writeWishlist(list: WishItem[]) {
 }
 
 export default function WishList() {
-  const [items, setItems] = useState<WishItem[] | null>(null); // null = “cargando” inicial
+  const [items, setItems] = useState<WishItem[] | null>(null); 
 
   useEffect(() => {
     setItems(readWishlist());

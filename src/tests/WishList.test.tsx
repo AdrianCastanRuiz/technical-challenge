@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import WishList
- from '../pages/WishList';
+ from '../pages/WishList/Index';
 jest.mock('../../api/tmdb', () => ({
   posterUrl: (path: string, _size?: string) => `https://img.test/${path}`,
 }));

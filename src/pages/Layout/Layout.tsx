@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import styles from "./UI.module.scss";
+import styles from "./Layout.module.scss";
 
-const UI = () => {
+const Layout = () => {
   const { pathname } = useLocation();
   const isOnWishlist = pathname === "/wishlist" || pathname.startsWith("/wishlist/");
 
@@ -32,4 +32,4 @@ const UI = () => {
   );
 };
 
-export default UI;
+export default Layout;

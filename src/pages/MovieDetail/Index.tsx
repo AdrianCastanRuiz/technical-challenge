@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './MovieDetails.module.scss';
-import { getMovie, posterUrl } from '../../api/tmdb';
-import Loading from '../components/Loading';
-import type { WishItem } from '../types/WishItem';
-import type { TmdbMovie } from '../types/TmdbMovie';
+import { getMovie, posterUrl } from '../../../api/tmdb';
+import Loading from '../../components/Loading';
+import type { WishItem } from '../../types/WishItem';
+import type { TmdbMovie } from '../../types/TmdbMovie';
 
 
 const LS_KEY = 'wishlist';
