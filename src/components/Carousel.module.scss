@@ -1,27 +1,18 @@
-/* Carousel.module.scss */
-
-/* =========
-   Variables
-   ========= */
 $gap: 16px;
 $radius: 10px;
 $nav-size: 36px;
 
-$bp-xl: 1280px;  /* desktop amplio */
-$bp-lg: 1024px;  /* laptop/tablet landscape */
-$bp-md: 768px;   /* tablet */
-$bp-sm: 600px;   /* móvil */
+$bp-xl: 1280px;  
+$bp-lg: 1024px;  
+$bp-md: 768px;   
+$bp-sm: 600px;   
 
-/* =========
-   Bloque
-   ========= */
+
 .block {
   margin-bottom: 28px;
 }
 
-/* =========
-   Header
-   ========= */
+
 .header {
   display: flex;
   align-items: center;
@@ -41,9 +32,6 @@ $bp-sm: 600px;   /* móvil */
   align-items: center;
 }
 
-/* =========
-   Botones
-   ========= */
 .navBtn {
   width: $nav-size;
   height: $nav-size;
@@ -73,10 +61,6 @@ $bp-sm: 600px;   /* móvil */
   cursor: not-allowed;
 }
 
-.progress {
-  font-size: 12px;
-  opacity: 0.8;
-}
 
 .inlineLoader {
   display: inline-flex;
@@ -84,17 +68,11 @@ $bp-sm: 600px;   /* móvil */
   margin-left: 6px;
 }
 
-/* =========
-   States
-   ========= */
 .state {
   padding: 8px 0;
   opacity: 0.9;
 }
 
-/* =========
-   Viewport & fila
-   ========= */
 .viewport {
   width: 100%;
   overflow: hidden;
@@ -102,50 +80,39 @@ $bp-sm: 600px;   /* móvil */
 
 .row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 películas ocupan todo el ancho */
+  grid-template-columns: repeat(5, 1fr); 
   column-gap: $gap;
   row-gap: 0;
 
-  /* desktop amplio: opcional 5->5 (sin cambios) */
   @media (max-width: $bp-xl) {
     grid-template-columns: repeat(5, 1fr);
   }
 
-  /* laptops / tablets landscape: 4 columnas */
   @media (max-width: $bp-lg) {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  /* tablets: 3 columnas */
   @media (max-width: $bp-md) {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  /* móviles: 2 columnas */
   @media (max-width: $bp-sm) {
     grid-template-columns: repeat(2, 1fr);
     column-gap: 12px;
   }
 }
 
-/* =========
-   Tarjeta
-   ========= */
 .card {
   display: grid;
   grid-template-rows: auto auto;
   gap: 8px;
 }
 
-/* ocupar 100% de la columna */
 .posterLink {
   display: block;
   width: 100%;
   border-radius: $radius;
   overflow: hidden;
-  outline: none;
-
-  /* foco visible accesible */
   &:focus-visible {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
   }
@@ -187,9 +154,7 @@ $bp-sm: 600px;   /* móvil */
   text-overflow: ellipsis;
 }
 
-/* =========
-   Accesibilidad / rendimiento
-   ========= */
+
 @media (prefers-reduced-motion: reduce) {
   .navBtn,
   .poster {
@@ -197,9 +162,6 @@ $bp-sm: 600px;   /* móvil */
   }
 }
 
-/* =========
-   Responsive finos
-   ========= */
 @media (max-width: $bp-sm) {
   .title {
     font-size: 0.9rem;

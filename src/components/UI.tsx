@@ -15,7 +15,6 @@ const UI = () => {
         </h1>
       </header>
 
-      {/* El main ocupa todo el espacio disponible para empujar el footer abajo */}
       <main className={styles.main} role="main">
         <div className={styles.toolbar}>
           {!isOnWishlist && (
@@ -25,7 +24,6 @@ const UI = () => {
           )}
         </div>
 
-        {/* Aquí renderizan tus páginas */}
         <Outlet />
       </main>
 

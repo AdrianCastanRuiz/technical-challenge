@@ -9,25 +9,21 @@ type CarouselProps = {
   title: string;
   genreId: number;
   language?: string;
-  page?: number; // página inicial de TMDB (por defecto 1)
+  page?: number; 
 };
 
 const PAGE_SIZE = 5;
 
 const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProps) => {
+  
   const [items, setItems] = useState<TmdbMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // UI
   const [pageIndex, setPageIndex] = useState(0);
-
-  // API
   const [tmdbPage, setTmdbPage] = useState<number>(page);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  // Carga inicial / cuando cambian filtros
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -58,7 +54,6 @@ const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProp
     };
   }, [genreId, language, page]);
 
-  // Derivados simples
   const pageCount = useMemo(
     () => Math.max(1, Math.ceil(items.length / PAGE_SIZE)),
     [items.length]
@@ -92,7 +87,7 @@ const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProp
         setItems((prev) => [...prev, ...newResults]);
         setTmdbPage(d.page ?? nextPageNum);
         setTotalPages(d.total_pages ?? totalPages);
-        // Si al agregar hay una nueva "slide", avanzamos
+
         const afterCount = Math.max(1, Math.ceil((items.length + newResults.length) / PAGE_SIZE));
         if (afterCount > beforeCount) {
           setPageIndex((i) => i + 1);
@@ -105,7 +100,6 @@ const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProp
     }
   };
 
-  // UI states
   if (loading) {
     return (
       <section className={styles.block} aria-label={title}>
@@ -155,10 +149,6 @@ const Carousel = ({ title, genreId, language = "en-US", page = 1 }: CarouselProp
           >
             ‹
           </button>
-
-          <span className={styles.progress} aria-live="polite">
-            {pageIndex + 1} / {pageCount}
-          </span>
 
           <button
             type="button"

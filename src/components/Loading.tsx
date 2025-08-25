@@ -20,10 +20,10 @@ export default function Loading({ size = 32, label = 'Loading…', overlay = fal
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}             // ✅ nombre accesible explícito
+      aria-label={label}            
     >
       <span className={styles.spinner} style={spinnerStyle} />
-      <span className={styles.srOnly} aria-hidden="true">{label}</span> {/* ✅ no se lee dos veces */}
+      <span className={styles.srOnly} aria-hidden="true">{label}</span> 
     </div>
   );
 
