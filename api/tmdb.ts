@@ -28,8 +28,3 @@ export async function getMovie(id: number, language = 'en-US') {
   return r.json();
 }
 
-
-export async function getGenres(){
-  const r = await fetch(`api.themoviedb.org/3/genre/movie/list`)
-  console.log(r)
-}

@@ -1,11 +1,10 @@
-// server.mjs — Express + Vite (SSR) sin variables de entorno
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-
-import tmdbRoutes from './api/tmdb.routes.mjs';      // 👈 router de la API
-import { TMDB_TOKEN_V4 } from './tmdb.secrets.mjs';   // 👈 tu token (gitignored)
+import tmdbRoutes from './api/tmdb.routes.mjs';      
+import { TMDB_TOKEN_V4 } from './tmdb.secrets.mjs';  
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
