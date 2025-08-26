@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
-jest.mock('../contexts/CarouselContext', () => ({
+jest.mock('../../contexts/CarouselContext', () => ({
   useCarousel: jest.fn(),
 }));
 
-jest.mock('../../api/tmdb', () => ({
+jest.mock('../../../api/tmdb', () => ({
   posterUrl: (p: string) => `https://img.test${p}`,
 }));
 
