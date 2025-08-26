@@ -10,9 +10,9 @@ jest.mock('../../api/tmdb', () => ({
   posterUrl: (p: string) => `https://img.test${p}`,
 }));
 
-import Carousel from '../components/Carousel/Index';
-import { useCarousel } from '../contexts/CarouselContext';
-import type { TmdbMovie } from '../types/TmdbMovie';
+import Carousel from '../../components/Carousel/Index';
+import { useCarousel } from '../../contexts/CarouselContext';
+import type { TmdbMovie } from '../../types/TmdbMovie';
 
 type UC = jest.MockedFunction<typeof useCarousel>;
 

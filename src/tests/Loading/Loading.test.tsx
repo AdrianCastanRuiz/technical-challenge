@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Loading from '../components/Loading/Index';
+import Loading from '../../components/Loading/Index';
 
 describe('Loading', () => {
   it('renderiza por defecto con nombre accesible y atributos ARIA correctos', () => {

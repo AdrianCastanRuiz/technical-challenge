@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Home from '../pages/Home';
+import Home from '../../pages/Home';
 
 describe('Home', () => {
   it('renderiza el contenedor principal <main>', () => {
