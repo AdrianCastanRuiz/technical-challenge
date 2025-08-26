@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState,type ReactNode } from 'react';
 import { discoverByGenre } from '../../api/tmdb';
 import type { TmdbMovie } from '../types/TmdbMovie';
+import type { CarouselContextValue } from '../types/CarouselContextValue';
 
 type CarouselProviderProps = {
   genreId: number;
@@ -10,20 +11,7 @@ type CarouselProviderProps = {
   children: ReactNode;
 };
 
-type CarouselContextValue = {
-  items: TmdbMovie[];
-  loading: boolean;
-  error: string | null;
 
-  pageIndex: number;
-  isFetchingMore: boolean;
-  canPrev: boolean;
-  canNext: boolean;
-  visible: TmdbMovie[];
-
-  prev: () => void;
-  next: () => Promise<void> | void;
-};
 
 const CarouselContext = createContext<CarouselContextValue | undefined>(undefined);
 
