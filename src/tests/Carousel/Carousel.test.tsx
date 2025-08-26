@@ -124,9 +124,7 @@ describe('Carousel (presentational)', () => {
       </MemoryRouter>
     );
 
-    // con poster
     expect(screen.getByRole('img', { name: 'Movie 1' })).toBeInTheDocument();
-    // fallback accesible
     expect(screen.getByLabelText(/no image/i)).toBeInTheDocument();
 
     const prevBtn = screen.getByRole('button', { name: /previous/i });
@@ -138,7 +136,7 @@ describe('Carousel (presentational)', () => {
     await userEvent.click(nextBtn);
     expect(next).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(prevBtn); // disabled → no llama
+    await userEvent.click(prevBtn); 
     expect(prev).not.toHaveBeenCalled();
   });
 

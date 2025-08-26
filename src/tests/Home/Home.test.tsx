@@ -21,18 +21,15 @@ describe('Home', () => {
       </MemoryRouter>
     );
 
-    // Cada <Carousel> usa <section aria-label={title}> → role="region"
     const regions = screen.getAllByRole('region');
     expect(regions).toHaveLength(3);
 
-    // Comprueba los encabezados visibles dentro de cada región
     const headings = regions.map(r => within(r).getByRole('heading', { level: 2 }));
 
     expect(headings[0]).toHaveTextContent('Action');
     expect(headings[1]).toHaveTextContent('Comedy');
     expect(headings[2]).toHaveTextContent('Drama');
 
-    // También puedes localizarlos directamente
     expect(screen.getByRole('region', { name: 'Action' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Comedy' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Drama' })).toBeInTheDocument();

@@ -14,15 +14,12 @@ describe('Loading', () => {
   it('aplica tamaño al spinner y usa label personalizado', () => {
     render(<Loading size={48} label="Cargando…" />);
 
-    // nombre accesible personalizado
     const status = screen.getByRole('status', { name: 'Cargando…' });
     expect(status).toBeInTheDocument();
 
-    // El spinner es el PRIMER span dentro del status
     const spinner = status.querySelector('span') as HTMLElement;
     expect(spinner).toBeTruthy();
 
-    // Estilos inline generados a partir de size=48 (borderWidth = max(2, round(48/8)) = 6)
     expect(spinner).toHaveStyle('width: 48px; height: 48px; border-width: 6px;');
   });
 
@@ -33,8 +30,7 @@ describe('Loading', () => {
     const overlay = status.parentElement as HTMLElement;
 
     expect(overlay).toBeTruthy();
-    expect(overlay).not.toBe(status);        // está envuelto
-    // y el overlay contiene al status
+    expect(overlay).not.toBe(status);        
     expect(overlay.contains(status)).toBe(true);
   });
 });

@@ -1,4 +1,3 @@
-// src/tests/MovieDetail/MovieDetailContext.test.tsx
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { render, screen, waitFor } from '@testing-library/react';
