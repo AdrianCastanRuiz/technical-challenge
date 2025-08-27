@@ -1,11 +1,10 @@
-// Home.tsx (ejemplo)
+import "./Home.scss"
 import { CarouselProvider } from '../../contexts/CarouselContext';
 import Carousel from '../../components/Carousel/Index';
-import styles from './Home.module.scss';
 
 export default function Home() {
   return (
-    <main className={styles.container}>
+    <main className="home-container">
       <CarouselProvider genreId={28} language="en-US" pageSize={5}>
         <Carousel title="Action" />
       </CarouselProvider>

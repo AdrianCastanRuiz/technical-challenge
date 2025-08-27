@@ -2,18 +2,16 @@ $gap: 16px;
 $radius: 10px;
 $nav-size: 36px;
 
-$bp-xl: 1280px;  
-$bp-lg: 1024px;  
-$bp-md: 768px;   
-$bp-sm: 600px;   
+$bp-xl: 1280px;
+$bp-lg: 1024px;
+$bp-md: 768px;
+$bp-sm: 600px;
 
-
-.block {
+.carousel-block {
   margin-bottom: 28px;
 }
 
-
-.header {
+.carousel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,18 +19,18 @@ $bp-sm: 600px;
   margin-bottom: 12px;
 }
 
-.title {
+.carousel-title {
   font-size: 1rem;
   font-weight: 700;
 }
 
-.actions {
+.carousel-actions {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.navBtn {
+.carousel-navBtn {
   width: $nav-size;
   height: $nav-size;
   border-radius: 9999px;
@@ -54,33 +52,32 @@ $bp-sm: 600px;
     background-color: rgba(255, 255, 255, 0.06);
     outline: none;
   }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
-.navBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-
-.inlineLoader {
+.carousel-inlineLoader {
   display: inline-flex;
   align-items: center;
   margin-left: 6px;
 }
 
-.state {
+.carousel-state {
   padding: 8px 0;
   opacity: 0.9;
 }
 
-.viewport {
+.carousel-viewport {
   width: 100%;
   overflow: hidden;
 }
 
-.row {
+.carousel-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); 
+  grid-template-columns: repeat(5, 1fr);
   column-gap: $gap;
   row-gap: 0;
 
@@ -102,23 +99,24 @@ $bp-sm: 600px;
   }
 }
 
-.card {
+.carousel-card {
   display: grid;
   grid-template-rows: auto auto;
   gap: 8px;
 }
 
-.posterLink {
+.carousel-posterLink {
   display: block;
   width: 100%;
   border-radius: $radius;
   overflow: hidden;
+
   &:focus-visible {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
   }
 }
 
-.poster {
+.carousel-poster {
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
@@ -128,15 +126,15 @@ $bp-sm: 600px;
   will-change: transform;
 }
 
-.posterLink:hover .poster,
-.posterLink:focus-visible .poster {
+.carousel-posterLink:hover .carousel-poster,
+.carousel-posterLink:focus-visible .carousel-poster {
   transform: scale(1.06) translateY(-2px);
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
   filter: saturate(1.05);
   cursor: pointer;
 }
 
-.fallback {
+.carousel-fallback {
   width: 100%;
   aspect-ratio: 2 / 3;
   border-radius: $radius;
@@ -146,7 +144,7 @@ $bp-sm: 600px;
   background: rgba(127, 127, 127, 0.15);
 }
 
-.caption {
+.carousel-caption {
   font-size: 14px;
   margin: 0;
   white-space: nowrap;
@@ -154,22 +152,21 @@ $bp-sm: 600px;
   text-overflow: ellipsis;
 }
 
-
 @media (prefers-reduced-motion: reduce) {
-  .navBtn,
-  .poster {
+  .carousel-navBtn,
+  .carousel-poster {
     transition: none;
   }
 }
 
 @media (max-width: $bp-sm) {
-  .title {
+  .carousel-title {
     font-size: 0.9rem;
   }
-  .header {
+  .carousel-header {
     padding: 0 1rem;
   }
-  .caption {
+  .carousel-caption {
     font-size: 13px;
   }
 }

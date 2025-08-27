@@ -1,0 +1,117 @@
+.movieDetails-container {
+  --accent: #16a33a;
+  --title-font: inherit;
+
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+}
+
+.movieDetails-poster {
+  width: 240px;
+  border-radius: 10px;
+  display: block;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+.movieDetails-title {
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+  color: var(--accent);
+  font-family: var(--title-font);
+}
+
+.movieDetails-meta {
+  margin: 0 0 12px 0;
+  opacity: 0.85;
+}
+
+.movieDetails-wishBtn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  margin: 8px 0 16px;
+  font-size: 14px;
+  transition: background 0.16s ease, color 0.16s ease, opacity 0.16s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--accent);
+    color: #fff;
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: default;
+  }
+}
+
+.movieDetails-added {
+  background: var(--accent);
+  color: #fff;
+}
+
+.movieDetails-overview {
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+.movieDetails-loading {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.movieDetails-error {
+  padding: 24px;
+}
+
+.movieDetails-g-action {
+  --accent: #ff4757;
+  --title-font: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.movieDetails-g-comedy {
+  --accent: #f1c40f;
+  --title-font: 'Trebuchet MS', Verdana, sans-serif;
+}
+.movieDetails-g-drama {
+  --accent: #8e44ad;
+  --title-font: Georgia, 'Times New Roman', serif;
+}
+.movieDetails-g-horror {
+  --accent: #e74c3c;
+  --title-font: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.movieDetails-g-romance {
+  --accent: #ff6b81;
+  --title-font: Georgia, 'Times New Roman', serif;
+}
+.movieDetails-g-scifi {
+  --accent: #00bcd4;
+  --title-font: 'Lucida Sans', Geneva, Verdana, sans-serif;
+}
+.movieDetails-g-animation {
+  --accent: #20c997;
+  --title-font: 'Trebuchet MS', Verdana, sans-serif;
+}
+.movieDetails-g-default {
+  --accent: #5b8cff;
+  --title-font: inherit;
+}
+
+@media (max-width: 640px) {
+  .movieDetails-container {
+    grid-template-columns: 1fr;
+  }
+  .movieDetails-poster {
+    width: 200px;
+    margin: 0 auto;
+  }
+}

@@ -1,5 +1,4 @@
-// Loading.tsx
-import styles from './Loading.module.scss';
+import './Loading.scss';
 
 type Props = {
   size?: number;
@@ -16,16 +15,18 @@ export default function Loading({ size = 32, label = 'Loading…', overlay = fal
 
   const content = (
     <div
-      className={styles.wrapper}
+      className="loading-wrapper"
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}            
+      aria-label={label}
     >
-      <span className={styles.spinner} style={spinnerStyle} />
-      <span className={styles.srOnly} aria-hidden="true">{label}</span> 
+      <span className="loading-spinner" style={spinnerStyle} />
+      <span className="loading-srOnly" aria-hidden="true">
+        {label}
+      </span>
     </div>
   );
 
-  return overlay ? <div className={styles.overlay}>{content}</div> : content;
+  return overlay ? <div className="loading-overlay">{content}</div> : content;
 }

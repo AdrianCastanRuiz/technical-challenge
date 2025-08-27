@@ -1,8 +1,8 @@
-.container {
+.wishlist-container {
   padding: 24px 24px 8px;
 }
 
-.header {
+.wishlist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -10,19 +10,19 @@
   margin-bottom: 16px;
 }
 
-.title {
+.wishlist-title {
   margin: 0;
   font-size: 22px;
   font-weight: 700;
 }
 
-.tools {
+.wishlist-tools {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.count {
+.wishlist-count {
   min-width: 28px;
   height: 28px;
   padding: 0 8px;
@@ -30,66 +30,70 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   font-size: 13px;
 }
 
-.clearBtn {
+.wishlist-clearBtn {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   background: transparent;
   cursor: pointer;
   font-size: 13px;
-}
-.clearBtn:hover { background: rgba(255,255,255,0.06); }
 
-.grid {
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.wishlist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 14px;
 }
 
-.card {
+.wishlist-card {
   display: grid;
   grid-template-rows: auto auto auto;
   gap: 8px;
 }
 
-.posterLink {
+.wishlist-posterLink {
   display: block;
   border-radius: 10px;
   overflow: hidden;
   outline: none;
 }
 
-.poster {
+.wishlist-poster {
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
   border-radius: 10px;
   display: block;
-  box-shadow: 0 4px 18px rgba(0,0,0,.15);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
 }
-.posterLink:hover .poster,
-.posterLink:focus-visible .poster {
+
+.wishlist-posterLink:hover .wishlist-poster,
+.wishlist-posterLink:focus-visible .wishlist-poster {
   transform: scale(1.04) translateY(-2px);
-  box-shadow: 0 8px 26px rgba(0,0,0,.25);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
   filter: saturate(1.05);
 }
 
-.fallback {
+.wishlist-fallback {
   width: 100%;
   aspect-ratio: 2 / 3;
   border-radius: 10px;
   display: grid;
   place-items: center;
   font-size: 42px;
-  background: rgba(127,127,127,.15);
+  background: rgba(127, 127, 127, 0.15);
 }
 
-.caption {
+.wishlist-caption {
   margin: 0;
   font-size: 14px;
   white-space: nowrap;
@@ -97,50 +101,59 @@
   text-overflow: ellipsis;
 }
 
-.year { opacity: 0.8; }
+.wishlist-year {
+  opacity: 0.8;
+}
 
-.removeBtn {
+.wishlist-removeBtn {
   justify-self: start;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   background: transparent;
   cursor: pointer;
   font-size: 13px;
-}
-.removeBtn:hover { background: rgba(255,255,255,0.06); }
 
-.loading {
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.wishlist-loading {
   min-height: 320px;
   display: grid;
   place-items: center;
   padding: 24px;
 }
 
-.emptyWrap {
+.wishlist-emptyWrap {
   display: grid;
   place-items: center;
   min-height: 320px;
   padding: 24px;
 }
 
-.empty {
+.wishlist-empty {
   text-align: center;
   opacity: 0.95;
 }
 
-.cta {
+.wishlist-cta {
   display: inline-block;
   margin-top: 8px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-decoration: none;
   font-size: 13px;
-}
-.cta:hover { background: rgba(255,255,255,0.06); }
 
-/* Responsive tweaks */
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
 @media (max-width: 640px) {
-  .container { padding: 16px; }
+  .wishlist-container {
+    padding: 16px;
+  }
 }
